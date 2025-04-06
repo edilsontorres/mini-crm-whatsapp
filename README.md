@@ -10,6 +10,10 @@ Mini sistema de CRM com atendimento via WhatsApp, desenvolvido com foco em estud
 
 ## Estrutura do projeto
 
+/mini-crm-whatsapp 
+    ├── backend-aspnet → API principal em ASP.NET Core 
+    ├── whatsapp-bot → Microserviço em Node.js com venom-bot 
+    └── frontend-react → Painel administrativo em React
 
 ## Funcionalidades principais
 
