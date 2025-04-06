@@ -1,0 +1,30 @@
+# ASP.NET Core
+bin/
+obj/
+*.db
+*.db-shm
+*.db-wal
+
+# Node.js
+node_modules/
+dist/
+
+# React (Vite ou Create React App)
+frontend/node_modules/
+frontend/dist/
+
+# IDEs
+.vscode/
+.idea/
+*.user
+*.suo
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Others
+.env
