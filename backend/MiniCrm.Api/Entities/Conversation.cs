@@ -11,7 +11,7 @@ namespace MiniCrm.Api.Entities
         public int Id {get; set;}
         public string ClientNumber {get; set;} = null!;
         public string? ClientName {get; set;}
-        public int? UserId { get; set; } // Nullable
+        public Guid? UserId { get; set; } // Nullable
         public User? User { get; set; }
         public DateTime StartedAt {get; set;} = DateTime.UtcNow;
         public DateTime? FinishedAt {get; set;}

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniCrm.Api.Data;
 
@@ -10,9 +11,11 @@ using MiniCrm.Api.Data;
 namespace MiniCrm.Api.Migrations
 {
     [DbContext(typeof(MiniCrmContext))]
-    partial class MiniCrmContextModelSnapshot : ModelSnapshot
+    [Migration("20250408002002_UpdateTypeIdTableUser")]
+    partial class UpdateTypeIdTableUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
