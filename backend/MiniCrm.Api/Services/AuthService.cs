@@ -3,15 +3,18 @@ using MiniCrm.Api.Data;
 using MiniCrm.Api.Dtos;
 using MiniCrm.Api.Entities;
 using MiniCrm.Api.Services.Interfaces;
+using MiniCrm.Api.Services.JwtService;
 
 namespace MiniCrm.Api.Services
 {
     public class AuthService : IAuthService
     {
         private readonly MiniCrmContext _context;
-        public AuthService(MiniCrmContext context)
+        private readonly TokenService _tokenService;
+        public AuthService(MiniCrmContext context, TokenService tokenService)
         {
             _context = context;
+            _tokenService = tokenService;
         }
 
         public async Task<ResponseUserDto> RegisterAsync(RegisterUserDto dto)
@@ -22,7 +25,7 @@ namespace MiniCrm.Api.Services
                 throw new Exception("Email já cadastrado");
             }
 
-            var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.PasswordHash);
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
             var user = new User
             {
@@ -46,25 +49,27 @@ namespace MiniCrm.Api.Services
             };
         }
 
-        public async Task<string> LoginAsync(LoginUserDto dto)
+        public async Task<ResponseUserDto> LoginAsync(LoginUserDto dto)
         {
             var userDb = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
             if (userDb != null && userDb.IsActive == true)
             {
+                
                 bool passwordValid = BCrypt.Net.BCrypt.Verify(dto.Password, userDb.PasswordHash);
+                
                 if (!passwordValid)
                 {
                     throw new Exception("Usuário ou senha inválidos");
                 }
 
-                //servço de gerar o token
-                //var token = _tokenService.GenerateToken(user);
-                // return new LoginResponseDto
-                // {
-                //     Token = token,
-                //     Name = user.Name,
-                //     Email = user.Email
-                // };
+                var token = _tokenService.GenerateToken(userDb);
+
+                return new ResponseUserDto
+                {
+                    Name = userDb.Name,
+                    Email = userDb.Email,
+                    Token = token
+                };
             }
 
             throw new Exception("Usuário ou senha inválidos");
