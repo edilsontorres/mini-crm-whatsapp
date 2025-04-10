@@ -12,6 +12,7 @@ namespace MiniCrm.Api.Data
         public DbSet<User> Users {get; set;}
         public DbSet<Conversation> Conversations {get; set;}
         public DbSet<Message> Messages {get; set;}
+        public DbSet<Client> Clients {get; set;}
 
         //registrando configuraçoes do Fluent API
         protected override void OnModelCreating(ModelBuilder modelBuilder)
