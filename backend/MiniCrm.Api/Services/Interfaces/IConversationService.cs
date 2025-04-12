@@ -9,5 +9,6 @@ namespace MiniCrm.Api.Services.Interfaces
     public interface IConversationService
     {
         Task<ConversationDto> AssignAsync(int conversationId, Guid userId);
+        Task<ConversationDto> FinishAsync(int conversationId);
     }
 }

@@ -46,5 +46,36 @@ namespace MiniCrm.Api.Services
             };
 
         }
+
+        public async Task<ConversationDto> FinishAsync(int conversationId)
+        {
+            var conversation = await _context.Conversations
+                                            .Include(c => c.User)
+                                            .Include(c => c.Client)
+                                            .FirstOrDefaultAsync(c => c.Id == conversationId);
+
+            if (conversation == null) throw new Exception("Conversa não encontrada!");
+            if (conversation.Status != ConversationStatus.InProgress) throw new Exception("Mensagem não esta em atendimento ou já foi finalizada");
+
+            conversation.Status = ConversationStatus.Finished;
+            conversation.FinishedAt = DateTime.UtcNow;
+           
+            _context.Conversations.Update(conversation);
+            await _context.SaveChangesAsync();
+
+            return new ConversationDto
+            {
+                Id = conversation.Id,
+                ClientNumber = conversation.Client.PhoneNumber,
+                ClientName = conversation.Client.Name,
+                UserId = conversation.UserId,
+                UserName = conversation.User?.Name,
+                Status = conversation.Status.ToString(),
+                StartedAt = conversation.StartedAt,
+                AssignedAt = conversation.AssignedAt,
+                FinishedAt = conversation.FinishedAt
+            };
+
+        }
     }
 }

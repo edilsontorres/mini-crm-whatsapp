@@ -35,25 +35,19 @@ namespace MiniCrm.Api.Controllers
             }
         }
 
-        [HttpPost("fake")]
-        public async Task<IActionResult> CreateFakeConversation()
+        [HttpPut("{id}/finish")]
+        public async Task<ActionResult<ConversationDto>> FinishAsync(int id)
         {
-            var client = await _context.Clients.FirstOrDefaultAsync();
-            if (client == null) return BadRequest("Nenhum cliente encontrado");
-
-            var conversation = new Conversation
+            try
             {
-                ClientId = client.Id,
-                StartedAt = DateTime.UtcNow,
-                Status = ConversationStatus.Open
-            };
-
-            _context.Conversations.Add(conversation);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { conversation.Id });
+                var conversation = await _conversationService.FinishAsync(id);
+                return Ok(conversation);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
-
 
     }
 
