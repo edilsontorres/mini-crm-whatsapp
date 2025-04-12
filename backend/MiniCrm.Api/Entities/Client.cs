@@ -9,6 +9,7 @@ namespace MiniCrm.Api.Entities
         public bool IsActive {get; set;} = true;
         public DateTime CreatedAt {get; set;} = DateTime.UtcNow;
         public DateTime? LastMessageAt {get; set;}
+        public ICollection<Conversation> Conversations { get; set; } = new List<Conversation>();
 
     }
 }

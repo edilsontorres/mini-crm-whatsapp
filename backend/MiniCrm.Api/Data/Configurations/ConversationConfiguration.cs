@@ -12,12 +12,8 @@ namespace MiniCrm.Api.Data.Configurations
 
             builder.HasKey(c => c.Id);
 
-            builder.Property(c => c.ClientNumber)
-                .IsRequired()
-                .HasColumnType("VARCHAR(20)");
-
-            builder.Property(c => c.ClientName)
-                .HasColumnType("VARCHAR(100)");
+            builder.Property(c => c.AssignedAt)
+                .IsRequired(false);
 
             builder.Property(c => c.StartedAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
@@ -28,6 +24,11 @@ namespace MiniCrm.Api.Data.Configurations
             builder.Property(c => c.Status)
                 .HasConversion<int>() // Armazena como int no banco
                 .HasDefaultValue(ConversationStatus.Open);
+
+            builder.HasOne(c => c.Client)
+                .WithMany(c => c.Conversations)
+                .HasForeignKey(c => c.ClientId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(c => c.User)
                 .WithMany(u => u.Conversations)
