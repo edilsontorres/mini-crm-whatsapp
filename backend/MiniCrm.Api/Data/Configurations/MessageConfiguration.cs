@@ -20,6 +20,7 @@ namespace MiniCrm.Api.Data.Configurations
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             builder.Property(m => m.IsFromClient)
+                .IsRequired()
                 .HasColumnType("BOOLEAN");
 
             builder.HasOne(m => m.Conversation)

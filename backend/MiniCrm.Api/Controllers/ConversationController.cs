@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using MiniCrm.Api.Data;
 using MiniCrm.Api.Dtos;
-using MiniCrm.Api.Entities;
 using MiniCrm.Api.Services.Interfaces;
 
 namespace MiniCrm.Api.Controllers
