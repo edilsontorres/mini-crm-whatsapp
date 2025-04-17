@@ -28,5 +28,19 @@ namespace MiniCrm.Api.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        [HttpPost("respond")]
+        public async Task<ActionResult> SendMessageToClientAsync(OutgoingMessageDto dto)
+        {
+            try
+            {
+                await _webhookService.SendMessageToClientAsync(dto);
+                return Ok(new {message = "Mensagem enviada com sucesso!"});
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new {message = ex.Message});
+            }
+        }
     }
 }

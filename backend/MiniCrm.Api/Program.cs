@@ -22,6 +22,7 @@ builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IConversationService, ConversationService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IWebhookService, WebhookService>();
+builder.Services.AddHttpClient<IWebhookService, WebhookService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(opt =>
 {

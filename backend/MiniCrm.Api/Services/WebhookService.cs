@@ -9,10 +9,12 @@ namespace MiniCrm.Api.Services
     public class WebhookService : IWebhookService
     {
         private readonly MiniCrmContext _context;
+        private readonly HttpClient _httpClient;
 
-        public WebhookService(MiniCrmContext context)
+        public WebhookService(MiniCrmContext context, HttpClient httpClient)
         {
             _context = context;
+            _httpClient = httpClient;
         }
         public async Task HandleIncomingMessageAsync(IncomingMessageDto dto)
         {
@@ -36,9 +38,9 @@ namespace MiniCrm.Api.Services
                                     .OrderByDescending(c => c.StartedAt)
                                     .FirstOrDefaultAsync();
 
-            if(conversation == null)
+            if (conversation == null)
             {
-                conversation =  new Conversation
+                conversation = new Conversation
                 {
                     ClientId = client.Id,
                     StartedAt = DateTime.UtcNow,
@@ -60,6 +62,21 @@ namespace MiniCrm.Api.Services
             _context.Messages.Add(message);
             client.LastMessageAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
+        }
+
+        public async Task SendMessageToClientAsync(OutgoingMessageDto dto)
+        {
+            var response = await _httpClient.PostAsJsonAsync("http://localhost:3000/api/send-message", new
+            {
+                phoneNumber = dto.PhoneNumber,
+                message = dto.Message
+                
+            });
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Erro ao enviar mensagem ao microserviço.");
+            }
         }
     }
 }
