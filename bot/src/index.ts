@@ -3,8 +3,10 @@ import dotnenv from 'dotenv';
 import cors from 'cors';
 import morgan from 'morgan';
 import webhookRoutes from './routes/webhookRoutes';
+import { initWhatsapp } from './bot/client';
 
 dotnenv.config();
+initWhatsapp();
 
 const app = express();
 

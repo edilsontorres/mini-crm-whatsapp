@@ -1,3 +1,2 @@
-2025/04/16-20:07:26.626 2709 Reusing MANIFEST /home/edilsontorres/Documentos/mini-crm-whatsapp/bot/tokens/crm-session/Default/Site Characteristics Database/MANIFEST-000001
-2025/04/16-20:07:26.628 2709 Recovering log #3
-2025/04/16-20:07:26.628 2709 Reusing old log /home/edilsontorres/Documentos/mini-crm-whatsapp/bot/tokens/crm-session/Default/Site Characteristics Database/000003.log 
+2025/04/16-22:54:36.260 1f66 Creating DB /home/edilsontorres/Documentos/mini-crm-whatsapp/bot/tokens/crm-session/Default/Site Characteristics Database since it was missing.
+2025/04/16-22:54:36.285 1f66 Reusing MANIFEST /home/edilsontorres/Documentos/mini-crm-whatsapp/bot/tokens/crm-session/Default/Site Characteristics Database/MANIFEST-000001

@@ -1,3 +1,2 @@
-2025/04/16-20:07:26.624 2708 Reusing MANIFEST /home/edilsontorres/Documentos/mini-crm-whatsapp/bot/tokens/crm-session/Default/Service Worker/Database/MANIFEST-000001
-2025/04/16-20:07:26.625 2708 Recovering log #3
-2025/04/16-20:07:26.625 2708 Reusing old log /home/edilsontorres/Documentos/mini-crm-whatsapp/bot/tokens/crm-session/Default/Service Worker/Database/000003.log 
+2025/04/16-22:54:38.658 1f78 Creating DB /home/edilsontorres/Documentos/mini-crm-whatsapp/bot/tokens/crm-session/Default/Service Worker/Database since it was missing.
+2025/04/16-22:54:38.667 1f78 Reusing MANIFEST /home/edilsontorres/Documentos/mini-crm-whatsapp/bot/tokens/crm-session/Default/Service Worker/Database/MANIFEST-000001
