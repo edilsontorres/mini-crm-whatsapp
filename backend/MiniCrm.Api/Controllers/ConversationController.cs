@@ -19,6 +19,20 @@ namespace MiniCrm.Api.Controllers
             _context = context;
         }
 
+        [HttpGet("waiting")]
+        public async Task<ActionResult<WaitingConversationDto>> GetWaitingConversationsAsync()
+        {
+            try
+            {
+                var conversations = await _conversationService.GetWaitingConversationsAsync();
+                return Ok(conversations);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new {message = ex.Message});
+            }
+        }
+
         [HttpPut("{id}/assing")]
         public async Task<ActionResult<ConversationDto>> AssignConversation(int id, [FromBody] AssignConversationDto dto)
         {

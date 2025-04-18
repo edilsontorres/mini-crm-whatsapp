@@ -59,7 +59,7 @@ namespace MiniCrm.Api.Services
 
             conversation.Status = ConversationStatus.Finished;
             conversation.FinishedAt = DateTime.UtcNow;
-           
+
             _context.Conversations.Update(conversation);
             await _context.SaveChangesAsync();
 
@@ -76,6 +76,23 @@ namespace MiniCrm.Api.Services
                 FinishedAt = conversation.FinishedAt
             };
 
+        }
+
+        public async Task<List<WaitingConversationDto>> GetWaitingConversationsAsync()
+        {
+            var conversation = await _context.Conversations
+                                            .Include(c => c.Client)
+                                            .Where(c => c.Status == ConversationStatus.Open && c.User == null)
+                                            .OrderBy(c => c.StartedAt)
+                                            .ToListAsync();
+
+            return conversation.Select(c => new WaitingConversationDto
+            {
+                Id = c.Id,
+                ClientName = c.Client.Name,
+                PhoneNumber = c.Client.PhoneNumber,
+                StartedAt = c.StartedAt
+            }).ToList();
         }
     }
 }
