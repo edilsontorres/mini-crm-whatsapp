@@ -1,32 +1,27 @@
 import { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { DefaultConection } from "../../../api/axios";
+import { Conversation, Message } from "../types/conversationsTypes";
 
-interface Message {
-    id: number;
-    content: string;
-    sentAt: string;
-    isFromClient: boolean;
-}
-
-export function useConversationDetail() {
+export const useConversationDetail = () =>  {
     const { conversationId } = useParams<{ conversationId: string }>();
+    const [conversation, setConversation] = useState<Conversation | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
-    const location = useLocation();
     const [loading, setLoading] = useState(true);
 
-    const conversation = location.state?.conversation;
-
     useEffect(() => {
-        console.log("conversationId da URL:", conversationId);
-        console.log("conversation via state:", conversation);
         if (!conversationId) return;
 
-        async function fetchConversationDetail() {
+        const fetchData = async () => {
             try {
                 setLoading(true);
 
-                const messagesRes = await DefaultConection().get<Message[]>(`message/conversation/${conversationId}`);
+                const [convRes, messagesRes] = await Promise.all([
+                    DefaultConection().get<Conversation>(`conversation/${conversationId}`),
+                    DefaultConection().get<Message[]>(`message/conversation/${conversationId}`)
+                ]);
+
+                setConversation(convRes.data);
                 setMessages(messagesRes.data);
 
             } catch (err) {
@@ -36,7 +31,7 @@ export function useConversationDetail() {
             }
         }
 
-        fetchConversationDetail();
+        fetchData();
     }, [conversationId]);
 
     return { conversation, messages, loading };
