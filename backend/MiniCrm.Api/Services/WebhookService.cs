@@ -66,11 +66,26 @@ namespace MiniCrm.Api.Services
 
         public async Task SendMessageToClientAsync(OutgoingMessageDto dto)
         {
+            var conversation = await _context.Conversations.FindAsync(dto.ConversationId);
+            if (conversation == null) throw new Exception("Conversa não encontrada!");
+
+            var message = new Message
+            {
+                ConversationId = dto.ConversationId,
+                Content = dto.Message,
+                SentAt = DateTime.UtcNow,
+                IsFromClient = false
+            };
+
+            _context.Messages.Add(message);
+            await _context.SaveChangesAsync();
+
             var response = await _httpClient.PostAsJsonAsync("http://localhost:3000/api/send-message", new
             {
                 phoneNumber = dto.PhoneNumber,
-                message = dto.Message
-                
+                message = dto.Message,
+                isFromClient = false
+
             });
 
             if (!response.IsSuccessStatusCode)

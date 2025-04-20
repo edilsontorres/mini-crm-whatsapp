@@ -32,13 +32,13 @@ namespace MiniCrm.Api.Controllers
         [HttpPost("conversation/message")]
         public async Task<ActionResult<MessageDto>> SendMessageAsync([FromBody] CreateMessageDto dto)
         {
-             try
+            try
             {
                 var message = await _messageService.SendMessageAsync(dto);
                 return Ok(message);
             }
             catch (Exception ex)
-            {
+            { 
                 return BadRequest(new { message = ex.Message });
             }
         }

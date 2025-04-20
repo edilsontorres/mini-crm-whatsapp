@@ -33,6 +33,20 @@ namespace MiniCrm.Api.Controllers
             }
         }
 
+        [HttpGet("{conversationId}")]
+        public async Task<ActionResult<ConversationDto>> GetConversationDtoById(int conversationId)
+        {
+            try
+            {
+                var conversation = await _conversationService.GetConversationDtoById(conversationId);
+                return Ok(conversation);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new {message = ex.Message});
+            }
+        }
+
         [HttpPut("{id}/assing")]
         public async Task<ActionResult<ConversationDto>> AssignConversation(int id, [FromBody] AssignConversationDto dto)
         {

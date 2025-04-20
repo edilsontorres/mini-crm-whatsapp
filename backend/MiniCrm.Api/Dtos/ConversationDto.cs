@@ -8,7 +8,7 @@ namespace MiniCrm.Api.Dtos
     public class ConversationDto
     {
         public int Id {get;set;}
-        public string ClientNumber {get;set;} = null!;
+        public string PhoneNumber {get;set;} = null!;
         public Guid ClientId {get;set;}
         public string ClientName {get;set;} = null!;
         public Guid? UserId {get;set;}

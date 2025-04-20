@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MiniCrm.Api.Data;
 using MiniCrm.Api.Dtos;
@@ -35,7 +36,7 @@ namespace MiniCrm.Api.Services
             return new ConversationDto
             {
                 Id = conversation.Id,
-                ClientNumber = conversation.Client.PhoneNumber,
+                PhoneNumber = conversation.Client.PhoneNumber,
                 ClientName = conversation.Client.Name,
                 UserId = conversation.UserId,
                 UserName = conversation.User?.Name,
@@ -66,7 +67,7 @@ namespace MiniCrm.Api.Services
             return new ConversationDto
             {
                 Id = conversation.Id,
-                ClientNumber = conversation.Client.PhoneNumber,
+                PhoneNumber = conversation.Client.PhoneNumber,
                 ClientName = conversation.Client.Name,
                 UserId = conversation.UserId,
                 UserName = conversation.User?.Name,
@@ -93,6 +94,32 @@ namespace MiniCrm.Api.Services
                 PhoneNumber = c.Client.PhoneNumber,
                 StartedAt = c.StartedAt
             }).ToList();
+        }
+
+        public async Task<ConversationDto> GetConversationDtoById(int conversationId)
+        {
+            var conversation = await _context.Conversations
+                                    .Include(c => c.Client)
+                                    .Include(c => c.User)
+                                    .FirstOrDefaultAsync(c => c.Id == conversationId);
+
+            if (conversation == null) throw new Exception("Conversa não encontrada!"); 
+               
+
+            return new ConversationDto
+            {
+                Id = conversation.Id,
+                ClientId = conversation.ClientId,
+                PhoneNumber = conversation.Client.PhoneNumber,
+                ClientName = conversation.Client?.Name ?? "Client",
+                UserId = conversation.UserId,
+                UserName = conversation.User?.Name,
+                Status = conversation.Status.ToString(),
+                StartedAt = conversation.StartedAt,
+                AssignedAt = conversation.AssignedAt,
+                FinishedAt = conversation.FinishedAt
+            };
+
         }
     }
 }
