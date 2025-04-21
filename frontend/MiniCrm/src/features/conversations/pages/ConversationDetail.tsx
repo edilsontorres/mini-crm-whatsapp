@@ -1,32 +1,28 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useConversationDetail } from "../hooks/useConversationDetail";
-import { DefaultConection } from "../../../api/axios";
+import { useMessageSender } from "../hooks/useSendMessage";
+import { useFinishConversation } from "../hooks/useFinishedConversation";
 
 export const ConversationDetail = () => {
   const { conversation, messages, loading } = useConversationDetail();
+  const { sendMessage, sending } = useMessageSender(conversation);
+  const { finishConversation } = useFinishConversation(conversation);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
   const [newMessage, setNewMessage] = useState<string>("");
-  const [sending, setSending] = useState<boolean>(false);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+
+  }, [messages]);
+
 
   const handleSendMessage = async () => {
-    if (!newMessage.trim() || !conversation) return;
+    await sendMessage(newMessage);
+    setNewMessage("");
+  };
 
-    try {
-      setSending(true);
-      await DefaultConection().post('/webhook/respond', {
-        conversationId: conversation.id,
-        phoneNumber: conversation.phoneNumber,
-        message: newMessage.trim(),
-        isFromClient: false
-      });
-
-      setNewMessage("");
-      window.location.reload();
-
-    } catch (error) {
-      console.log("Erro ao enviar a mensagem: ", error);
-    } finally {
-      setSending(false);
-    }
+  const handleFinishConversation = async () => {
+    await finishConversation()
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -36,32 +32,41 @@ export const ConversationDetail = () => {
     }
   };
 
-
-
   if (loading) return <p>Carregando...</p>;
   if (!conversation) return <p>Conversa não encontrada.</p>;
 
   return (
+
     <div className="p-4 flex flex-col h-screen">
+      {conversation?.status !== "Finished" && (
+        <button
+          onClick={handleFinishConversation}
+          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+        >
+          Finalizar conversa
+        </button>
+      )}
       <h2 className="text-xl font-bold mb-4">
         Conversa com {conversation.clientName}
       </h2>
 
-      <div className="flex-1 overflow-y-auto space-y-2 mb-4">
+      <div className="flex-1 overflow-y-auto space-y-2 mb-4 h-full">
         {messages.map((msg) => (
           <div
             key={msg.id}
             className={`p-2 rounded-lg max-w-[70%] ${msg.isFromClient
-                ? "bg-gray-200 text-left"
-                : "bg-green-200 text-right ml-auto"
+              ? "bg-gray-200 text-left"
+              : "bg-green-200 text-right ml-auto"
               }`}
           >
             <p>{msg.content}</p>
             <span className="block text-xs text-gray-500 mt-1">
               {new Date(msg.sentAt).toLocaleTimeString()}
             </span>
+
           </div>
         ))}
+        <div ref={bottomRef} />
       </div>
 
       <div className="flex gap-2">
@@ -80,6 +85,7 @@ export const ConversationDetail = () => {
         >
           Enviar
         </button>
+
       </div>
     </div>
   );
