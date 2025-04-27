@@ -14,12 +14,14 @@ export const initWhatsapp = async (): Promise<Whatsapp> => {
     console.log('Whatsapp client iniciado!');
 
     clientInstance.onMessage(async (msg) => {
+        
 
         if (msg.fromMe) return;
         const phoneNumber = msg.from;
         const message = msg.body;
+        const clientName = msg.sender?.pushname || "Client";
 
-        // console.log('Nova mensagem recebida:');
+        // console.log('Nome do cliente: ', clientName);
         // console.log(`De: ${phoneNumber}`);
         // console.log(`Conteúdo: ${message}`);
 
@@ -27,7 +29,8 @@ export const initWhatsapp = async (): Promise<Whatsapp> => {
 
             await axios.post("http://localhost:5070/api/webhook", {
                 phoneNumber,
-                message
+                message,
+                clientName
             });
 
             console.log('Webhook enviado com sucesso!');
