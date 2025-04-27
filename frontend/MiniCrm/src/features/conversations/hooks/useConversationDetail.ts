@@ -4,8 +4,10 @@ import { DefaultConection } from "../../../api/axios";
 import { Conversation, Message } from "../types/conversationsTypes";
 import { usePolling } from "./usePolling";
 
-export const useConversationDetail = () => {
-    const { conversationId } = useParams<{ conversationId: string }>();
+export const useConversationDetail = (conversationIdParam?: string) => {
+    const { conversationId: routeConversationId } = useParams<{ conversationId: string }>();
+    const conversationId = conversationIdParam || routeConversationId;
+    
     const [conversation, setConversation] = useState<Conversation | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(true);
@@ -13,6 +15,7 @@ export const useConversationDetail = () => {
 
     const fetchData = async () => {
         if (!conversationId) return;
+        
         try {
             setLoading(true);
 
