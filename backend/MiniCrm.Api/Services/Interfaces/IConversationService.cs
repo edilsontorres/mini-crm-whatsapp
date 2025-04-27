@@ -12,5 +12,6 @@ namespace MiniCrm.Api.Services.Interfaces
         Task<ConversationDto> FinishAsync(int conversationId);
         Task<List<WaitingConversationDto>> GetWaitingConversationsAsync();
         Task<ConversationDto> GetConversationDtoById(int conversationId);
+        Task<List<ListAssignedConversationDto>> ListAssignedConversationAsync(Guid userId);
     }
 }

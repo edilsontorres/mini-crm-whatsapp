@@ -23,7 +23,7 @@ namespace MiniCrm.Api.Services
             {
                 client = new Client
                 {
-                    Name = "Client",
+                    Name = dto.ClientName,
                     PhoneNumber = dto.PhoneNumber,
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow

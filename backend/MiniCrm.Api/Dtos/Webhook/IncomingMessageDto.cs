@@ -9,5 +9,6 @@ namespace MiniCrm.Api.Dtos.Webhook
     {
         public string PhoneNumber { get; set; } = null!;
         public string Message { get; set; } = null!;
+        public string? ClientName {get; set;}
     }
 }

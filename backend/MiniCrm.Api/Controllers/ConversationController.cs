@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MiniCrm.Api.Data;
 using MiniCrm.Api.Dtos;
 using MiniCrm.Api.Services.Interfaces;
@@ -19,6 +20,20 @@ namespace MiniCrm.Api.Controllers
             _context = context;
         }
 
+        [HttpGet("assigned")]
+        public async Task<ActionResult<ListAssignedConversationDto>> ListAssignedConversation([FromQuery] Guid userId)
+        {
+            try
+            {
+                var result = await _conversationService.ListAssignedConversationAsync(userId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
         [HttpGet("waiting")]
         public async Task<ActionResult<WaitingConversationDto>> GetWaitingConversationsAsync()
         {
@@ -27,9 +42,9 @@ namespace MiniCrm.Api.Controllers
                 var conversations = await _conversationService.GetWaitingConversationsAsync();
                 return Ok(conversations);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return BadRequest(new {message = ex.Message});
+                return BadRequest(new { message = ex.Message });
             }
         }
 
@@ -43,7 +58,7 @@ namespace MiniCrm.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new {message = ex.Message});
+                return BadRequest(new { message = ex.Message });
             }
         }
 

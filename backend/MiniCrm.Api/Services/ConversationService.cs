@@ -16,6 +16,27 @@ namespace MiniCrm.Api.Services
             _context = context;
 
         }
+
+        public async Task<List<ListAssignedConversationDto>> ListAssignedConversationAsync(Guid userId)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            
+            if(user == null) throw new Exception("Usuário não encontrado");
+
+            return await _context.Conversations
+            .Where(c => c.UserId == userId && c.Status != ConversationStatus.Finished)
+            .Select(c => new ListAssignedConversationDto
+            {
+                Id = c.Id,
+                PhoneNumber = c.Client.PhoneNumber,
+                ClientId = c.ClientId,
+                ClientName = c.Client.Name,
+                StartedAt = c.StartedAt,
+                AssignedAt = c.AssignedAt
+            })
+            .ToListAsync();
+
+        }
         public async Task<ConversationDto> AssignAsync(int conversationId, Guid userId)
         {
             var conversation = await _context.Conversations
@@ -103,8 +124,8 @@ namespace MiniCrm.Api.Services
                                     .Include(c => c.User)
                                     .FirstOrDefaultAsync(c => c.Id == conversationId);
 
-            if (conversation == null) throw new Exception("Conversa não encontrada!"); 
-               
+            if (conversation == null) throw new Exception("Conversa não encontrada!");
+
 
             return new ConversationDto
             {
