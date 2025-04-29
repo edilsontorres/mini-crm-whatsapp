@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { DefaultConection } from "../../../api/axios";
-//import { useNavigate } from "react-router-dom";
-import { WaitingConversationDto } from "../types/conversationsTypes"
+import { WaitingConversationDto } from "../types/conversationsTypes";
 import { usePolling } from "../hooks/usePolling";
+import { DateTime } from "luxon";
+
 
 
 export const WaitingPanel = ({ onCapture }: { onCapture: (conversationId: number) => void }) => {
     const [conversations, setConversations] = useState<WaitingConversationDto[]>([]);
-    //const navigate = useNavigate();
 
     const getConversations = async () => {
         try {
@@ -23,14 +23,9 @@ export const WaitingPanel = ({ onCapture }: { onCapture: (conversationId: number
             userId: "6C32373A-AD0A-46BF-9E46-B0288A395AEB"
         }
 
-
         try {
             await DefaultConection().put(`conversation/${conversationId}/assing`, data);
             onCapture(conversationId);
-            // navigate(`/conversation/${conversationId}`, {
-            //     state: { data }
-            // });
-
             getConversations();
         } catch (error) {
             console.error("Erro ao buscar as conversas não saiu daqui: ", error);
@@ -54,7 +49,15 @@ export const WaitingPanel = ({ onCapture }: { onCapture: (conversationId: number
                         <div key={conversation.id} className="bg-gray-800 border border-gray-700 p-4 rounded-md shadow-sm">
                             <h3 className="text-xl font-semibold text-gray-100">{conversation.clientName}</h3>
                             <p className="text-gray-400">Telefone: {conversation.phoneNumber}</p>
-                            <p className="text-gray-400">Iniciada em: {new Date(conversation.startedAt).toLocaleString()}</p>
+                            <p className="text-gray-400">
+                                Iniciada em:
+                                {
+                                    DateTime.fromISO(conversation.startedAt, { zone: 'utc' })
+                                        .setZone('America/Sao_Paulo')
+                                        .toFormat('dd/MM/yyyy HH:mm:ss')
+                                }
+
+                            </p>
                             <div className="flex justify-between items-center">
                                 <p className="text-sm text-gray-400">Status: {conversation.status === 0 ? "Aguardando" : "Em progresso"}</p>
                                 <button

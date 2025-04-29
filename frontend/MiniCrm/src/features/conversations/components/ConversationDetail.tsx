@@ -2,18 +2,22 @@ import { useEffect, useRef, useState } from "react";
 import { useConversationDetail } from "../hooks/useConversationDetail";
 import { useMessageSender } from "../hooks/useSendMessage";
 import { useFinishConversation } from "../hooks/useFinishedConversation";
+import { DateTime } from "luxon";
+import { EmojiPickerButton } from "../../../components/EmojiPickerButton";
+
 
 type Props = {
   conversationId?: string;
   onConversationFinished: () => void
 }
 
-export const ConversationDetail = ({ conversationId, onConversationFinished}: Props) => {
+export const ConversationDetail = ({ conversationId, onConversationFinished }: Props) => {
   const { conversation, messages, loading } = useConversationDetail(conversationId);
   const { sendMessage, sending } = useMessageSender(conversation);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [newMessage, setNewMessage] = useState<string>("");
+
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -22,7 +26,6 @@ export const ConversationDetail = ({ conversationId, onConversationFinished}: Pr
 
   useEffect(() => {
     if (textareaRef.current) {
-      // Ajusta a altura do textarea de acordo com o conteúdo
       textareaRef.current.style.height = "auto";
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
@@ -37,7 +40,7 @@ export const ConversationDetail = ({ conversationId, onConversationFinished}: Pr
   const { finishConversation } = useFinishConversation(conversation, onConversationFinished);
 
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
@@ -76,7 +79,11 @@ export const ConversationDetail = ({ conversationId, onConversationFinished}: Pr
           >
             <p className="whitespace-pre-wrap break-words">{msg.content}</p>
             <span className="block text-xs text-gray-500 mt-1">
-              {new Date(msg.sentAt).toLocaleTimeString()}
+              {
+                DateTime.fromISO(msg.sentAt, { zone: 'utc' })
+                  .setZone('America/Sao_Paulo')
+                  .toFormat('dd/MM/yyyy HH:mm:ss')
+              }
             </span>
 
           </div>
@@ -84,7 +91,10 @@ export const ConversationDetail = ({ conversationId, onConversationFinished}: Pr
         <div ref={bottomRef} />
       </div>
 
-      <div className="flex items-center space-x-2 mt-4">
+      <div className="flex items-center space-x-2 mt-4 relative">
+        <EmojiPickerButton
+          onSelectEmoji={(emoji) => setNewMessage((prev) => prev + emoji)}
+        />
         <textarea
           ref={textareaRef}
           placeholder="Digite uma mensagem..."
@@ -94,6 +104,7 @@ export const ConversationDetail = ({ conversationId, onConversationFinished}: Pr
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyDown={handleKeyPress}
         />
+
         <button
           onClick={handleSendMessage}
           disabled={sending}
