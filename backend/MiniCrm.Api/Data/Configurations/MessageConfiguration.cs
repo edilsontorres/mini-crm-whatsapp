@@ -13,7 +13,7 @@ namespace MiniCrm.Api.Data.Configurations
             builder.HasKey(m => m.Id);
 
             builder.Property(m => m.Content)
-                .IsRequired()
+                .IsRequired(false)
                 .HasColumnType("TEXT");
 
             builder.Property(m => m.SentAt)
@@ -22,6 +22,13 @@ namespace MiniCrm.Api.Data.Configurations
             builder.Property(m => m.IsFromClient)
                 .IsRequired()
                 .HasColumnType("BOOLEAN");
+
+            builder.Property(m => m.Type)
+                .HasDefaultValue(MessageType.Text);
+
+            builder.Property(m => m.FilePath)
+                .HasColumnType("TEXT")
+                .IsRequired(false);
 
             builder.HasOne(m => m.Conversation)
                 .WithMany(c => c.Messages)

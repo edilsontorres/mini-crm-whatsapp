@@ -96,11 +96,13 @@ namespace MiniCrm.Api.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Content")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("ConversationId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("FilePath")
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsFromClient")
                         .HasColumnType("BOOLEAN");
@@ -109,6 +111,11 @@ namespace MiniCrm.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<int>("Type")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(0);
 
                     b.HasKey("Id");
 
