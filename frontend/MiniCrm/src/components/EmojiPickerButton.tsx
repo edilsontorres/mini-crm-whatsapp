@@ -1,5 +1,6 @@
 import EmojiPicker from "emoji-picker-react";
 import { Theme } from 'emoji-picker-react';
+import { Smile } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 type EmojiPickerButtonProps = {
@@ -35,13 +36,11 @@ export const EmojiPickerButton = ({ onSelectEmoji }: EmojiPickerButtonProps) => 
 
     return (
         <div className="relative" ref={pickerRef}>
-            <button
+            <Smile
                 type="button"
                 onClick={() => setShowPicker((prev) => !prev)}
-                className="text-gray-400 hover:text-gray-200"
-            >
-                😊
-            </button>
+                className="text-gray-400 hover:text-gray-200 w-6 h-6 cursor-pointer"
+            />
             {showPicker && (
                 <div className="absolute bottom-12 left-0 z-50 bg-gray-800 rounded-lg shadow-lg p-2">
                     <EmojiPicker

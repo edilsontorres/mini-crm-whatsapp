@@ -4,7 +4,7 @@ export interface WaitingConversationDto {
     clientName: string;
     phoneNumber: string;
     startedAt: string;
-    status: number; 
+    status: number;
 }
 
 export interface Conversation {
@@ -25,4 +25,15 @@ export interface Message {
     content: string;
     sentAt: string;
     isFromClient: boolean;
+    type: MediaType;
+    publicUrl: string
+
+}
+
+export enum MediaType {
+    Texto = 0,
+    Audio = 1,
+    Image = 2,
+    Video = 3,
+    File = 4
 }
