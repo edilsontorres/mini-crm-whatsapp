@@ -4,6 +4,8 @@ obj/
 *.db
 *.db-shm
 *.db-wal
+wwwroot/
+
 
 # Node.js
 node_modules/
