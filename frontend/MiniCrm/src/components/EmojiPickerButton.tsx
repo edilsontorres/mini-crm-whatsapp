@@ -19,17 +19,21 @@ export const EmojiPickerButton = ({ onSelectEmoji }: EmojiPickerButtonProps) => 
         const handleClickOutside = (event: MouseEvent) => {
             if (pickerRef.current && !pickerRef.current.contains(event.target as Node)) {
                 setShowPicker(false);
+                console.log("Aqui é a função que escuta o clique fora")
             }
         };
 
         if (showPicker) {
             document.addEventListener('mousedown', handleClickOutside);
+            console.log("Cliquei no emoji e o estado agora é: ", showPicker)
         } else {
             document.removeEventListener('mousedown', handleClickOutside);
+            console.log("Cliquei novamente no emoji para fechar e o estado é: ", showPicker)
         }
 
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
+            console.log("E esse retorno")
         };
     }, [showPicker]);
 

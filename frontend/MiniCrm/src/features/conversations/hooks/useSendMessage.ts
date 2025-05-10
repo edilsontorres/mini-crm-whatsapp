@@ -39,7 +39,7 @@ export const useMessageSender = (conversation: Conversation | null) => {
 
       if (file) {
         formData.append('file', file);
-        formData.append('type', type);
+        formData.append('type', MediaType[type]);
       }
 
       await DefaultConection().post('/message/send-media', formData, {

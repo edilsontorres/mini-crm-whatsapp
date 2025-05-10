@@ -5,10 +5,14 @@ import { useFinishConversation } from "../hooks/useFinishedConversation";
 import { EmojiPickerButton } from "../../../components/EmojiPickerButton";
 import { MediaPickerMenu } from "../../../components/MediaPickerMenu";
 import { MediaType } from "../types/conversationsTypes";
-import { SendHorizontal, Plus, Mic, X } from "lucide-react";
+import { SendHorizontal, Plus, X } from "lucide-react";
 import { MediaPreview } from "./MediaPreview";
 import { LegendaInput } from "./LegendaInput";
 import { MessageList } from "./MessageList";
+import AudioInput from "./VoiceRecording";
+import { sendVoiceMessageAsync } from "../hooks/useSendVoiceMessage";
+
+
 
 type Props = {
   conversationId?: string;
@@ -18,16 +22,21 @@ type Props = {
 export const ConversationDetail = ({ conversationId, onConversationFinished }: Props) => {
   const { conversation, messages, loading } = useConversationDetail(conversationId);
   const { sendMessage, sendMediaMessage } = useMessageSender(conversation);
+  const { sendVoiceMessage } = sendVoiceMessageAsync(conversation);
+  const { finishConversation } = useFinishConversation(conversation, onConversationFinished);
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const plusButtonRef = useRef<SVGSVGElement>(null);
 
   const [newMessage, setNewMessage] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
   const [mediaType, setMediaType] = useState<MediaType | null>(null);
   const [showMediaMenu, setShowMediaMenu] = useState(false);
+  const [isRecordingAudio, setIsRecordingAudio] = useState(false);
+
 
   const previewUrl = file ? URL.createObjectURL(file) : null;
 
@@ -50,20 +59,38 @@ export const ConversationDetail = ({ conversationId, onConversationFinished }: P
     }
   }, [newMessage]);
 
+  const handlePlusClick = () => {
+    setShowMediaMenu((prev) => !prev);
+  };
+
+  const handleSendRecordedAudio = async (audioURL: string) => {
+    if (audioURL) {
+      try {
+        const response = await fetch(audioURL);
+        const audioBlob = await response.blob();
+        const audioFile = new File([audioBlob], "audio.webm", { type: "audio/webm" });
+        await sendVoiceMessage(newMessage, MediaType.Audio, audioFile);
+        setNewMessage("");
+        setIsRecordingAudio(false);
+      } catch (error) {
+        console.error("Erro ao converter URL para File:", error);
+      }
+    }
+  };
 
   const handleSendMessage = async () => {
+    console.log(file, mediaType);
     if (file && mediaType) {
       await sendMediaMessage(newMessage, mediaType, file);
       setFile(null);
       setMediaType(null);
+      console.log("enviou")
     } else {
       await sendMessage(newMessage);
+      console.log("entrou no else")
     }
     setNewMessage("");
   };
-
-  const { finishConversation } = useFinishConversation(conversation, onConversationFinished);
-
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -72,13 +99,21 @@ export const ConversationDetail = ({ conversationId, onConversationFinished }: P
     }
   };
 
+  const handleStartAudioRecording = () => {
+    setIsRecordingAudio(true);
+  };
+
+  const handleCancelRecording = () => {
+    setIsRecordingAudio(false); 
+  };
+
 
   if (loading) return <p>Carregando...</p>;
   if (!conversation) return <p>Conversa não encontrada.</p>;
 
   return (
 
-    <div className="relative p-4 flex flex-col h-screen bg-cover bg-center" style={{ backgroundImage: `url('../../../../public/bg.jpg')` }}>
+    <div className="relative p-2 flex flex-col h-screen bg-cover bg-center" style={{ backgroundImage: `url('../../../../bg.jpg')` }}>
       {conversation?.status !== "Finished" && (
         <div className="flex justify-end mb-4">
           <button
@@ -97,7 +132,7 @@ export const ConversationDetail = ({ conversationId, onConversationFinished }: P
       <MessageList messages={messages} bottomRef={bottomRef} />
 
       <div className={`absolute top-0 left-0 right-0 bottom-0 bg-cover bg-center flex flex-col  justify-center p-4 z-50 ${file ? 'block' : 'hidden'}`}
-        style={{ backgroundImage: `url('../../../../public/bg.jpg')` }}>
+        style={{ backgroundImage: `url('../../../../bg.jpg')` }}>
         <X
           onClick={() => {
             setFile(null);
@@ -111,65 +146,71 @@ export const ConversationDetail = ({ conversationId, onConversationFinished }: P
           previewUrl={previewUrl}
           videoRef={videoRef}
         />
-
-
         <LegendaInput
           newMessage={newMessage}
           setNewMessage={setNewMessage}
           handleSendMessage={handleSendMessage}
           inputRef={inputRef}
         />
-
       </div>
 
-
-      <div className=" flex items-center bg-gray-800 p-2 gap-3">
-        <EmojiPickerButton
-          onSelectEmoji={(emoji) => setNewMessage((prev) => prev + emoji)}
-        />
-        <div className="relative">
-          <Plus
-            onClick={() => setShowMediaMenu((prev) => !prev)}
-            className=" w-8 h-8 text-gray-400 hover:text-gray-200 cursor-pointer"
-          />
-
-          {showMediaMenu && (
-            <MediaPickerMenu
-              onSelectFile={(file) => {
-                setFile(file);
-                setMediaType(MediaType.File)
-                setShowMediaMenu(false);
-              }}
-              onSelectImage={(file) => {
-                setFile(file);
-                const detectedType = file.type.startsWith("video/")
-                  ? MediaType.Video
-                  : MediaType.Image;
-                setMediaType(detectedType);
-                setShowMediaMenu(false);
-              }}
-              onClose={() => setShowMediaMenu(false)}
+      <div className="flex items-center bg-gray-800 p-2 gap-3 justify-end min-h-[60px]">
+        {!isRecordingAudio && (
+          <>
+            <EmojiPickerButton
+              onSelectEmoji={(emoji) => setNewMessage((prev) => prev + emoji)}
             />
-          )}
-        </div>
+            <div className="relative">
+              <Plus
+                ref={plusButtonRef}
+                onClick={handlePlusClick}
+                className="w-8 h-8 text-gray-400 hover:text-gray-200 cursor-pointer"
+              />
+              {showMediaMenu && (
+                <MediaPickerMenu
+                  onSelectFile={(file) => {
+                    setFile(file);
+                    setMediaType(MediaType.File);
+                    setShowMediaMenu(false);
+                  }}
+                  onSelectImage={(file) => {
+                    setFile(file);
+                    const detectedType = file.type.startsWith("video/")
+                      ? MediaType.Video
+                      : MediaType.Image;
+                    setMediaType(detectedType);
+                    setShowMediaMenu(false);
+                  }}
+                  anchorElement={plusButtonRef.current}
+                  onClose={() => setShowMediaMenu(false)}
+                />
+              )}
+            </div>
+            <textarea
+              ref={textareaRef}
+              placeholder="Digite uma mensagem..."
+              className="resize-none p-2 rounded-lg w-full bg-gray-800 text-gray-100 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500 overflow-hidden"
+              rows={1}
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              onKeyDown={handleKeyPress}
+            />
 
-        <textarea
-          ref={textareaRef}
-          placeholder="Digite uma mensagem..."
-          className="resize-none p-2 rounded-lg w-full bg-gray-800 text-gray-100 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500 overflow-hidden"
-          rows={1}
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          onKeyDown={handleKeyPress}
-        />
+          </>
+        )}
 
-        <button>
-          {newMessage.trim() === "" ? (
-            <Mic className="w-6 h-6 text-gray-400 hover:text-gray cursor-pointer" />
-          ) : (
-            <SendHorizontal className="w-6 h-6 text-gray-400 hover:text-gray cursor-pointer" onClick={handleSendMessage} />
-          )}
-        </button>
+        {newMessage.trim() === "" ? (
+          <AudioInput
+            onRecordingStarted={handleStartAudioRecording}
+            onCancel={handleCancelRecording}
+            onSendAudio={handleSendRecordedAudio}
+          />
+        ) : (
+          <SendHorizontal
+            className="w-6 h-6 text-gray-400 hover:text-gray cursor-pointer"
+            onClick={handleSendMessage}
+          />
+        )}
       </div>
     </div >
   );
