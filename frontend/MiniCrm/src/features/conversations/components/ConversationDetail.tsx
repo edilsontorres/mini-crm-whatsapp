@@ -5,12 +5,13 @@ import { useFinishConversation } from "../hooks/useFinishedConversation";
 import { EmojiPickerButton } from "../../../components/EmojiPickerButton";
 import { MediaPickerMenu } from "../../../components/MediaPickerMenu";
 import { MediaType } from "../types/conversationsTypes";
-import { SendHorizontal, Plus, X } from "lucide-react";
+import { SendHorizontal, Plus, X, Smile } from "lucide-react";
 import { MediaPreview } from "./MediaPreview";
 import { LegendaInput } from "./LegendaInput";
 import { MessageList } from "./MessageList";
 import AudioInput from "./VoiceRecording";
 import { sendVoiceMessageAsync } from "../hooks/useSendVoiceMessage";
+import { HeadConversation } from "./HeadConversationDetail";
 
 
 
@@ -104,7 +105,7 @@ export const ConversationDetail = ({ conversationId, onConversationFinished }: P
   };
 
   const handleCancelRecording = () => {
-    setIsRecordingAudio(false); 
+    setIsRecordingAudio(false);
   };
 
 
@@ -113,21 +114,30 @@ export const ConversationDetail = ({ conversationId, onConversationFinished }: P
 
   return (
 
-    <div className="relative p-2 flex flex-col h-screen bg-cover bg-center" style={{ backgroundImage: `url('../../../../bg.jpg')` }}>
-      {conversation?.status !== "Finished" && (
-        <div className="flex justify-end mb-4">
-          <button
-            onClick={finishConversation}
-            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-700 cursor-pointer"
-          >
-            Finalizar
-          </button>
-        </div>
-      )}
+    <div className="relative  flex flex-col h-screen bg-cover bg-center" style={{ backgroundImage: `url('../../../../bg.jpg')` }}>
+      <div className="w=full bg-gray-800 mb-0.5 flex justify-between items-center p-2">
+        <div className="flex items-center">
+          <Smile className="mr-3 w-10 h-10"/>
+          <div>
+            <h2 className="text-xl font-bold  text-gray-100">
+              {conversation.clientName}
+            </h2>
+          </div>
 
-      <h2 className="text-xl font-bold mb-4  text-gray-100">
-        Conversa com {conversation.clientName}
-      </h2>
+        </div>
+
+
+        {conversation?.status !== "Finished" && (
+          <div className="flex justify-end">
+            <button
+              onClick={finishConversation}
+              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-700 cursor-pointer"
+            >
+              Finalizar
+            </button>
+          </div>
+        )}
+      </div>
 
       <MessageList messages={messages} bottomRef={bottomRef} />
 
