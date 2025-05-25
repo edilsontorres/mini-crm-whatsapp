@@ -9,21 +9,17 @@ export const initWhatsapp = async (): Promise<Whatsapp> => {
         return clientInstance;
     }
 
-
-    clientInstance = await create({ session: 'crm-session', headless: false })
+    
+    clientInstance = await create({session: 'crm-session', headless: "new", catchQR(base64Qrimg) {}})
     console.log('Whatsapp client iniciado!');
 
     clientInstance.onMessage(async (msg) => {
-        
+
 
         if (msg.fromMe) return;
         const phoneNumber = msg.from;
         const message = msg.body;
         const clientName = msg.sender?.pushname || "Client";
-
-        // console.log('Nome do cliente: ', clientName);
-        // console.log(`De: ${phoneNumber}`);
-        // console.log(`Conteúdo: ${message}`);
 
         try {
 
