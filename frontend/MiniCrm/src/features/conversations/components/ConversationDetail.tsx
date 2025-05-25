@@ -9,11 +9,8 @@ import { SendHorizontal, Plus, X, Smile } from "lucide-react";
 import { MediaPreview } from "./MediaPreview";
 import { LegendaInput } from "./LegendaInput";
 import { MessageList } from "./MessageList";
-import AudioInput from "./VoiceRecording";
+import { AudioInput } from "./VoiceRecording";
 import { sendVoiceMessageAsync } from "../hooks/useSendVoiceMessage";
-import { HeadConversation } from "./HeadConversationDetail";
-
-
 
 type Props = {
   conversationId?: string;
@@ -117,7 +114,7 @@ export const ConversationDetail = ({ conversationId, onConversationFinished }: P
     <div className="relative  flex flex-col h-screen bg-cover bg-center" style={{ backgroundImage: `url('../../../../bg.jpg')` }}>
       <div className="w=full bg-gray-800 mb-0.5 flex justify-between items-center p-2">
         <div className="flex items-center">
-          <Smile className="mr-3 w-10 h-10"/>
+          <Smile className="mr-3 w-10 h-10" />
           <div>
             <h2 className="text-xl font-bold  text-gray-100">
               {conversation.clientName}

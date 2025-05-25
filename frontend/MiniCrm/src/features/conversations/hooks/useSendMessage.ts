@@ -8,6 +8,7 @@ export const useMessageSender = (conversation: Conversation | null) => {
 
   const sendMessage = async (content: string) => {
     if (!conversation || !content.trim()) return;
+    
 
     try {
       setSending(true);
@@ -15,7 +16,7 @@ export const useMessageSender = (conversation: Conversation | null) => {
       await DefaultConection().post('/webhook/respond', {
         conversationId: conversation.id,
         phoneNumber: conversation.phoneNumber,
-        message: content.trim(),
+        content: content.trim(),
         isFromClient: false,
       });
     } catch (error) {
@@ -28,13 +29,16 @@ export const useMessageSender = (conversation: Conversation | null) => {
   const sendMediaMessage = async (content: string | null, type: MediaType, file?: File) => {
     if (!conversation || !file) return;
 
+
+
     try {
       setSending(true);
       const formData = new FormData();
       formData.append('conversationId', conversation.id.toString());
+      formData.append('phoneNumber', conversation.phoneNumber);
       formData.append('isFromClient', 'false');
-      if(content) formData.append('content', content);
       
+      if (content) formData.append('content', content || '');
 
 
       if (file) {
@@ -42,13 +46,13 @@ export const useMessageSender = (conversation: Conversation | null) => {
         formData.append('type', MediaType[type]);
       }
 
-      await DefaultConection().post('/message/send-media', formData, {
+      await DefaultConection().post('/webhook/respond-media', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-    
-      
+
+
 
     } catch (error) {
       console.error("Erro ao enviar a mensagem com mídia: ", error);

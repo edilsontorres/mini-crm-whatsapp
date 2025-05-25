@@ -11,15 +11,16 @@ export const sendVoiceMessageAsync = (conversation: Conversation | null) => {
       const formData = new FormData();
       formData.append('conversationId', conversation.id.toString());
       formData.append('isFromClient', 'false');
+      formData.append('phoneNumber', conversation.phoneNumber);
       if(content) formData.append('content', content);
       
 
       if (file) {
-        formData.append('file', file, 'audio.webm');
+        formData.append('file', file, 'audio.mp3');
         formData.append('type', MediaType[type]);
       }
 
-      await DefaultConection().post('/message/send-media', formData, {
+      await DefaultConection().post('/webhook/respond-media', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
