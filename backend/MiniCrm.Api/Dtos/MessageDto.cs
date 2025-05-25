@@ -10,6 +10,7 @@ namespace MiniCrm.Api.Dtos
         public bool IsFromClient { get; set; }
         public string? FilePath { get; set; }
         public MessageType Type { get; set; }
-        public string? PublicUrl {get; set;}
+        public string? PublicUrl { get; set; }
+        public string PhoneNumber { get; set; } = null!;
     }
 }

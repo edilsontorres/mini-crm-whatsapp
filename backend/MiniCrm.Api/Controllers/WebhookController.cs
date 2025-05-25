@@ -16,30 +16,48 @@ namespace MiniCrm.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> HandleIncomingMessageAsync(IncomingMessageDto dto)
+        public async Task<ActionResult> HandleIncomingMessageAsync([FromBody] IncomingMessageDto dto)
         {
             try
             {
                 await _webhookService.HandleIncomingMessageAsync(dto);
-                return Ok(new {message = "Mesangem processada com sucesso!"});
+                return Ok(new { message = "Mesangem processada com sucesso!" });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
         }
 
         [HttpPost("respond")]
-        public async Task<ActionResult> SendMessageToClientAsync(OutgoingMessageDto dto)
+        public async Task<ActionResult> SendMessageToClientAsync([FromBody] OutgoingMessageDto dto)
         {
+
+            if (dto.Content == "" || dto.Content == null) return BadRequest(new { message = "Não é possível enviar uma mensagem vazia" });
+
             try
             {
                 await _webhookService.SendMessageToClientAsync(dto);
-                return Ok(new {message = "Mensagem enviada com sucesso!"});
+                return Ok(new { message = "Mensagem enviada com sucesso!" });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return BadRequest(new {message = ex.Message});
+                return BadRequest(new { message = ex.Message });
+
+            }
+        }
+
+        [HttpPost("respond-media")]
+        public async Task<ActionResult> SendMediaMessageToClientAsync([FromForm] OutgoingMessageDto dto)
+        {
+            try
+            {
+                await _webhookService.SendMediaMessageToClientAsync(dto);
+                return Ok(new { message = "Mensagem enviada com sucesso!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
         }
     }

@@ -28,35 +28,5 @@ namespace MiniCrm.Api.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
-
-        [HttpPost("conversation/message")]
-        public async Task<ActionResult<MessageDto>> SendMessageAsync([FromBody] CreateMessageDto dto)
-        {
-            try
-            {
-                var message = await _messageService.SendMessageAsync(dto);
-                return Ok(message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-        }
-
-        [HttpPost("send-media")]
-        public async Task<ActionResult<MessageDto>> SendMediaMessageAsync([FromForm] CreateMediaMessageDto dto)
-        {
-            if (dto == null) return BadRequest("Dados da mensagem não fornecidos.");
-
-            try
-            {
-                var message = await _messageService.CreateMediaMessageAsync(dto);
-                return Ok(message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Erro ao enviar mensagem com mídia: {ex.Message}");
-            }
-        }
     }
 }

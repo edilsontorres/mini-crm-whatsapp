@@ -6,5 +6,6 @@ namespace MiniCrm.Api.Services.Interfaces
     {
         Task HandleIncomingMessageAsync(IncomingMessageDto dto);
         Task SendMessageToClientAsync(OutgoingMessageDto dto);
+        Task SendMediaMessageToClientAsync(OutgoingMessageDto dto);
     }
 }

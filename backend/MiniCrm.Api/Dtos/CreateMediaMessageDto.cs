@@ -13,5 +13,6 @@ namespace MiniCrm.Api.Dtos
         public bool IsFromClient { get; set; }
         public IFormFile File { get; set; } = null!;
         public MessageType Type { get; set; }
+        public string PhoneNumber { get; set; } = null!;
     }
 }

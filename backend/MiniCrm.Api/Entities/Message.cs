@@ -15,7 +15,7 @@ namespace MiniCrm.Api.Entities
         public Conversation Conversation { get; set; } = null!;
 
         public string? Content { get; set; }
-        
+
         public string? FilePath { get; set; }
 
         public MessageType Type { get; set; } = MessageType.Text;
