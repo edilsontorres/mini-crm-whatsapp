@@ -38,8 +38,9 @@ tokens/
 bot/tokens/crm-session/Default/IndexedDB/
 bot/tokens/crm-session/Default/Service Worker/ScriptCache/
 bot/tokens/crm-session/Default/Cache/
+bot/temp/uploads/
 
 limparCacheVenomBot.sh
-temp/uploads/
+
 
 
