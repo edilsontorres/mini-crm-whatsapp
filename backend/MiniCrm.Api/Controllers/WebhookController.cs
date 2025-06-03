@@ -29,6 +29,22 @@ namespace MiniCrm.Api.Controllers
             }
         }
 
+
+        [HttpPost("received-media")]
+        public async Task<ActionResult> HandleIncomingMediaMessageAsync([FromForm] IncomingMessageDto dto)
+        {
+            try
+            {
+                await _webhookService.HandleIcomingMediaMessageAsync(dto);
+                return Ok(new { message = "Mesangem processada com sucesso!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message});
+            }
+
+        }
+
         [HttpPost("respond")]
         public async Task<ActionResult> SendMessageToClientAsync([FromBody] OutgoingMessageDto dto)
         {

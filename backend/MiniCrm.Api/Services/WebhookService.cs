@@ -62,14 +62,103 @@ namespace MiniCrm.Api.Services
             var message = new Message
             {
                 ConversationId = conversation.Id,
-                Content = dto.Message,
+                Content = dto.Content,
                 SentAt = DateTime.UtcNow,
-                IsFromClient = true
+                IsFromClient = true,
+                Type = dto.Type
             };
 
             _context.Messages.Add(message);
             client.LastMessageAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
+        }
+
+        public async Task HandleIcomingMediaMessageAsync(IncomingMessageDto dto)
+        {
+            var client = await _context.Clients.FirstOrDefaultAsync(c => c.PhoneNumber == dto.PhoneNumber);
+            if (client == null)
+            {
+                client = new Client
+                {
+                    Name = dto.ClientName ?? "Client",
+                    PhoneNumber = dto.PhoneNumber,
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _context.Clients.Add(client);
+                await _context.SaveChangesAsync();
+            }
+
+            var conversation = await _context.Conversations
+                                    .Where(c => c.ClientId == client.Id && c.Status != ConversationStatus.Finished)
+                                    .OrderByDescending(c => c.StartedAt)
+                                    .FirstOrDefaultAsync();
+
+            if (conversation == null)
+            {
+                conversation = new Conversation
+                {
+                    ClientId = client.Id,
+                    StartedAt = DateTime.UtcNow,
+                    Status = ConversationStatus.Open
+                };
+
+                _context.Conversations.Add(conversation);
+                await _context.SaveChangesAsync();
+            }
+
+            if (dto.File == null || dto.File.Length == 0)
+                throw new ArgumentException("Arquivo inválido.");
+
+            string subfolder = dto.Type switch
+            {
+                MessageType.Audio => "Audios",
+                MessageType.Image => "Images",
+                MessageType.File => "Files",
+                MessageType.Video => "Videos",
+                _ => throw new ArgumentException("Tipo de mídia inválido.")
+            };
+
+            string folderPath = Path.Combine(_env.WebRootPath, "IncomingMediaUploads", subfolder);
+            Directory.CreateDirectory(folderPath);
+
+            string fileName = $"{Guid.NewGuid()}_{dto.File.FileName}";
+            string filePath = Path.Combine(folderPath, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await dto.File.CopyToAsync(stream);
+            }
+
+            var message = new Message
+            {
+                ConversationId = conversation.Id,
+                Content = dto.Content ?? string.Empty,
+                FilePath = $"/IncomingMediaUploads/{subfolder}/{fileName}",
+                SentAt = DateTime.UtcNow,
+                IsFromClient = true,
+                Type = dto.Type
+            };
+
+            _context.Messages.Add(message);
+            client.LastMessageAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+
+            var response = new MessageDto
+            {
+                PhoneNumber = dto.PhoneNumber,
+                Id = message.Id,
+                Content = message.Content ?? string.Empty,
+                FilePath = message.FilePath,
+                IsFromClient = message.IsFromClient,
+                SentAt = message.SentAt,
+                Type = message.Type,
+                PublicUrl = $"{_httpContextAccessor?.HttpContext?.Request.Scheme}://{_httpContextAccessor?.HttpContext?.Request.Host}{message.FilePath}"
+
+            };
+
         }
 
         public async Task SendMessageToClientAsync(OutgoingMessageDto dto)

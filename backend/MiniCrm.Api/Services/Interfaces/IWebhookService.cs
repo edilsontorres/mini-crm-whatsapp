@@ -5,6 +5,7 @@ namespace MiniCrm.Api.Services.Interfaces
     public interface IWebhookService
     {
         Task HandleIncomingMessageAsync(IncomingMessageDto dto);
+        Task HandleIcomingMediaMessageAsync(IncomingMessageDto dto);
         Task SendMessageToClientAsync(OutgoingMessageDto dto);
         Task SendMediaMessageToClientAsync(OutgoingMessageDto dto);
     }

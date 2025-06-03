@@ -1,5 +1,3 @@
-
-
 using MiniCrm.Api.Entities;
 
 namespace MiniCrm.Api.Dtos.Webhook
