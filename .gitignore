@@ -31,6 +31,8 @@ Thumbs.db
 # Others
 .env
 
+
+
 # Ignorar pastas de sessão e cache do venom-bot
 tokens/
 bot/tokens/crm-session/Default/IndexedDB/
@@ -38,5 +40,6 @@ bot/tokens/crm-session/Default/Service Worker/ScriptCache/
 bot/tokens/crm-session/Default/Cache/
 
 limparCacheVenomBot.sh
+temp/uploads/
 
 
