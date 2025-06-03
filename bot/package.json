@@ -8,6 +8,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "form-data": "^4.0.2",
+    "mime-types": "^3.0.1",
     "morgan": "^1.10.0",
     "venom-bot": "^5.3.0"
   },
@@ -17,6 +19,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
+    "@types/mime-types": "^2.1.4",
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.14.1",
     "ts-node-dev": "^2.0.0",
