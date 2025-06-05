@@ -1,4 +1,3 @@
-import path from 'path';
 import { getClient } from '../bot/client';
 
 export const sendMessageToClient = async (
@@ -13,7 +12,6 @@ export const sendMessageToClient = async (
 
   if (content) {
     await client.sendText(phoneNumber, content);
-    console.log("Texto enviado!")
   }
 
   if (publicUrl && type && filePath) {

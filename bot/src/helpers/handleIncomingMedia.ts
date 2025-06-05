@@ -5,10 +5,8 @@ export const handleIncomingMedia = async (client: Whatsapp, msg: Message): Promi
     const knowMediaTypes = ['image', 'video', 'audio', 'file', 'ptt'];
     const isMedia = msg.mimetype || knowMediaTypes.includes(msg.type);
 
-    if (!isMedia || !msg.id || !msg.mimetype) {
-        console.log("Mensagem recebida não parece ter mídia válida");
-        return null;
-    }
+    if (!isMedia || !msg.id || !msg.mimetype) return null;
+
 
     try {
         const mediaBuffer = await client.decryptFile(msg);

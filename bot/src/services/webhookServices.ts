@@ -2,7 +2,6 @@ import { Message, Whatsapp } from "venom-bot";
 import { handleIncomingMedia } from "../helpers/handleIncomingMedia";
 import axios from "axios";
 import { sendMediaToBackend } from "../utils/mediaUtils";
-import { MediaType } from "../types/webhook";
 
 export const handleIncomingMessage = async (client: Whatsapp, msg: Message) => {
     if (msg.fromMe) return;
@@ -23,14 +22,6 @@ export const handleIncomingMessage = async (client: Whatsapp, msg: Message) => {
 
     const mediaType = mapMediaTypeToEnum(msg.type);
 
-    // const payLoad = {
-    //     phoneNumber,
-    //     message,
-    //     clientName,
-    //     filePath: mediaData?.filePath || null,
-    //     type: mediaData?.type ?? 'text'
-    // };
-
     const mediaData = await handleIncomingMedia(client, msg);
 
     if (mediaData) {
@@ -42,16 +33,10 @@ export const handleIncomingMessage = async (client: Whatsapp, msg: Message) => {
             type: mediaType,
             sentAt: new Date().toISOString(),
         };
-        console.log("Payload recebido com midia");
-        console.log(payLoad);
 
         try {
-            console.log("Tentou enviar!");
-            console.log("O que chega aqui? ", mediaData.filePath);
             await sendMediaToBackend(mediaData.filePath, payLoad);
-            console.log("Mídia enviada com sucesso ao backend!");
         } catch (error: any) {
-            console.log("Não conseguiu enviar!");
             console.log(error.response.data.errors);
             console.error("Erro ao enviar mídia ao backend:", error);
         }

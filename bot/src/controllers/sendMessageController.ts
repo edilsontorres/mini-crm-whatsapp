@@ -1,21 +1,21 @@
-import { Request, RequestHandler, Response } from 'express';
+import { RequestHandler } from 'express';
 import { sendMessageToClient } from '../services/whatsappService';
 
-export const sendMessage: RequestHandler = async (req: Request, res: Response) => {
-    
+export const sendMessage: RequestHandler = async (req, res) => {
+
     const { phoneNumber, content } = req.body;
 
     if (!phoneNumber || !content) {
-        return res.status(400).json({ error: 'Número e mensagem são obrigatórios.' });
-        
+        res.status(400).json({ error: 'Número e mensagem são obrigatórios.' });
+
     }
 
     try {
         await sendMessageToClient(phoneNumber, content);
-        return res.status(200).json({ success: true, message: 'Mensagem enviada com sucesso.' });
+        res.status(200).json({ success: true, message: 'Mensagem enviada com sucesso.' });
 
     } catch (error) {
         console.error('Erro ao enviar mensagem:', error);
-        return res.status(500).json({ error: 'Erro ao enviar mensagem.' });
+        res.status(500).json({ error: 'Erro ao enviar mensagem.' });
     }
 };
