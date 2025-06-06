@@ -16,7 +16,7 @@ export const sendVoiceMessageAsync = (conversation: Conversation | null) => {
       
 
       if (file) {
-        formData.append('file', file, 'audio.mp3');
+        formData.append('file', file);
         formData.append('type', MediaType[type]);
       }
 
