@@ -13,15 +13,17 @@ namespace MiniCrm.Api.Services
         private readonly HttpClient _httpClient;
         private readonly IWebHostEnvironment _env;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IConvertAudioService _audioConverterService;
 
 
 
-        public WebhookService(MiniCrmContext context, HttpClient httpClient, IWebHostEnvironment env, IHttpContextAccessor httpContextAccessor)
+        public WebhookService(MiniCrmContext context, HttpClient httpClient, IWebHostEnvironment env, IHttpContextAccessor httpContextAccessor, IConvertAudioService audioConverterService)
         {
             _context = context;
             _httpClient = httpClient;
             _env = env;
             _httpContextAccessor = httpContextAccessor;
+            _audioConverterService = audioConverterService;
 
         }
         public async Task HandleIncomingMessageAsync(IncomingMessageDto dto)
@@ -217,6 +219,15 @@ namespace MiniCrm.Api.Services
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await dto.File.CopyToAsync(stream);
+            }
+            if (dto.Type == MessageType.Audio)
+            {
+                string convertedFilePath = await _audioConverterService.ConvertAudioToMp3Async(filePath);
+
+                // Atualiza o caminho relativo para salvar no banco e enviar ao microserviço
+                string convertedFileName = Path.GetFileName(convertedFilePath);
+                filePath = convertedFilePath;
+                fileName = convertedFileName;
             }
 
             var message = new Message
