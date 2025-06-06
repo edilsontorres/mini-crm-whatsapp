@@ -12,6 +12,9 @@ export const initWhatsapp = async (): Promise<Whatsapp> => {
     console.log('Whatsapp client iniciado!');
 
     clientInstance.onMessage(async (msg) => {
+        
+        if(msg.isGroupMsg) return null;
+        if(msg.from == "status@broadcast") return null;
 
         try {
 
