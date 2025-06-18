@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const DefaultConection = () => {
-   const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
     return axios.create({
         baseURL: 'http://localhost:5070/api',

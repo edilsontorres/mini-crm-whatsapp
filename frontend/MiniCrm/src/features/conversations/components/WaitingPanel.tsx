@@ -3,11 +3,22 @@ import { DefaultConection } from "../../../api/axios";
 import { WaitingConversationDto } from "../types/conversationsTypes";
 import { usePolling } from "../hooks/usePolling";
 import { DateTime } from "luxon";
-
-
+import { useAuth } from "../../screenLogin/auth/AuthContext";
+import { getUserId } from "../../../api/conversationApi";
 
 export const WaitingPanel = ({ onCapture }: { onCapture: (conversationId: number) => void }) => {
     const [conversations, setConversations] = useState<WaitingConversationDto[]>([]);
+    const [userId, setUserId] = useState<any>();
+    const { token } = useAuth();
+
+    useEffect(() => {
+        const fetchUserId = async () => {
+            const id = await getUserId(token);
+            setUserId(id);
+        }
+
+        fetchUserId();
+    }, [token]);
 
     const getConversations = async () => {
         try {
@@ -20,7 +31,7 @@ export const WaitingPanel = ({ onCapture }: { onCapture: (conversationId: number
 
     const handleCaptureConversation = async (conversationId: number) => {
         const data = {
-            userId: "6C32373A-AD0A-46BF-9E46-B0288A395AEB"
+            userId: userId
         }
 
         try {
@@ -28,7 +39,7 @@ export const WaitingPanel = ({ onCapture }: { onCapture: (conversationId: number
             onCapture(conversationId);
             getConversations();
         } catch (error) {
-            console.error("Erro ao buscar as conversas não saiu daqui: ", error);
+            console.error("Erro ao capturar a conversa: ", error);
         }
     }
 
