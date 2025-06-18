@@ -67,6 +67,7 @@ namespace MiniCrm.Api.Controllers
             if (userDb == null || !userDb.IsActive) return NotFound("Usuário não encontrado ou inativo");
             var response = new ResponseUserDto
             {
+                Id = userDb.Id,
                 Name = userDb.Name,
                 Email = userDb.Email,
                 Token = "" // opcional, pode omitir se não for necessário retornar o token de novo
